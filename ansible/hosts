@@ -10,6 +10,9 @@
 
 #输入三台master节点地址
 [master]
+192.168.0.1
+192.168.0.2
+192.168.0.3
 
 #master create
 [k8s_master_first]

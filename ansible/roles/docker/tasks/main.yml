@@ -1,0 +1,19 @@
+---
+- name: 下载docker-repo
+  shell: wget -O /etc/yum.repos.d/docker-ce.repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo warn=False
+
+- name: 安装docker
+  yum: name={{ item }} state=present
+  with_items:
+    - docker-ce
+
+- name: 创建临时目录
+  file: dest={{ docker_config_path }} state=directory
+
+- name: 复制docker配置文件
+  template: 
+    src: "daemon.json" 
+    dest: "{{ docker_config_path }}/daemon.json"
+
+- name: 启动docker
+  service: name=docker.service enabled=yes state=started

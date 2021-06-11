@@ -1,0 +1,25 @@
+#ansible-playbook -i host -e @inventory/var -f 3 
+---
+#所有要装nginx docker kubeadm kubectl kubelet的节点
+- name: "1.部署初始化 -- nginx,docker,kubeadm,kubectl,kubelet"
+  hosts: k8s
+  gather_facts: False
+  roles:
+    - { role: nginx, tags: nginx }
+    - { role: docker, tags: docker }
+    - { role: common, tags: common }
+
+- name: "2.部署生成kubernetes-master-01"
+  hosts: k8s_master_first
+  roles:
+    - { role: master_01, tags: master_01 }
+
+- name: "3.加入第二、三个控制节点"
+  hosts: k8s_master_second
+  roles:
+    - { role: master_02, tags: master_02 }
+
+- name: "4.加入计算节点"
+  hosts: k8s_node
+  roles:
+    - { role: node, tags: node }

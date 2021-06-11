@@ -24,3 +24,7 @@
   ignore_errors: yes
   when: flannel_install == 1
 
+- name: 设置kubectl自动补全
+  lineinfile:
+    dest: ~/.bashrc
+    line: "source <(kubectl completion bash)"

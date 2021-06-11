@@ -1,0 +1,6 @@
+---
+- name: 统一化配置文件
+  template: 
+    src: k8s.conf 
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx 

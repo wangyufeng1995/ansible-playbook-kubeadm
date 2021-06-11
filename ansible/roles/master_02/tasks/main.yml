@@ -1,4 +1,12 @@
 ---
+- name: 复制Nginx配置文件
+  template:
+    src: k8s.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Nginx配置
+  service: name=nginx state=restarted
+
 - name: 获取join-command脚本
   copy:
     src: /tmp/join-cluster-token-master.sh

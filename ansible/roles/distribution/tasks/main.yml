@@ -26,9 +26,7 @@
 - name: 设置kubectl自动补全
   lineinfile:
     dest: ~/.bashrc
-    line: "{{ item }}"
-  with_items:
-    - "source <(kubectl completion bash)"
+    line: "source <(kubectl completion bash)"
 
 - name: 生效配置
   shell: "source ~/.bashrc"

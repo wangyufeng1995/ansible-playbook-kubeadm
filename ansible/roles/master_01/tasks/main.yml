@@ -26,7 +26,6 @@
   debug: msg={{ kubernetes_join_token }}
 
 - name: 复制证书到其他控制节点
-  debug: msg="证书COPY"
   shell: "for i in {{ groups['k8s_master_second'] }};do scp '{{ item.src }}' $i:/{{ item.dest }}; done"
   with_items:
       - { src: '/etc/kubernetes/pki/ca.key',dest: '/etc/kubernetes/pki/ca.key'}

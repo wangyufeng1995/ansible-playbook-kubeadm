@@ -1,7 +1,20 @@
 ---
-- name: Node节点加入集群
-  command: "{{ hostvars[groups.k8s_node]['kubernetes_join_token'] }}"
-  register: check 
+- name: 接入API-Server
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
+    daemon_reload: yes
 
-- name: 查看加入信息
-  debug: var=check.stdout verbosity=0 
+- name: 保存Join-Cluster-Token
+  copy: 
+    src: /tmp/join-cluster-token-work.sh
+    dest: "/tmp/{{ item }}"
+    group: root
+    owner: root
+    mode: 755
+  with_items:
+    - join-cluster-token-work.sh
+  
+- name: ==Work节点加入集群==
+  shell: "sh /tmp/join-cluster-token-work.sh"

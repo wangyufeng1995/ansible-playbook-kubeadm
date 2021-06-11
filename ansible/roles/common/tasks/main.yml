@@ -13,16 +13,23 @@
 - name: 安装 Kubernetes 组件
   yum: name='{{item}}' state=present
   loop:
-    - "kubelet-{{version}}"
-    - "kubectl-{{version}}"
-    - "kubeadm-{{version}}"
+    - "kubelet-{{kubernetes_version}}"
+    - "kubectl-{{kubernetes_version}}"
+    - "kubeadm-{{kubernetes_version}}"
   
 - block:
   - copy: src="files/kubelet" dest="{{ kubelet_config_path }}/kubelet"
   - copy: src="files/10-kubeadm.conf" dest="/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
   - shell: kubeadm reset -f 
-  - service: enable=true name=nginx
-  - service: enable=true name=kubelet
+
+- name: 开机启动Nginx Kubelet
+  systemd:
+    name: "{{ item.svc }}"
+    daemon_reload: yes
+    enabled: yes
+  with_items:
+  - { svc : "nginx" }
+  - { svc : "kubelet" }
 
 - name: 创建kube目录
   file:

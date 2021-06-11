@@ -8,7 +8,7 @@
     - docker-ce
 
 - name: 创建临时目录
-  file: dest={{ docker_config_path }} state=directory
+  file: path={{ docker_config_path }} state=directory  mode=0755
 
 - name: 复制docker配置文件
   template: 

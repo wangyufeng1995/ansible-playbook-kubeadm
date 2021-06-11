@@ -1,0 +1,35 @@
+---
+- name: /etc/kubernetes/pki/etcd
+  file: path='/etc/kubernetes/pki/etcd' state=directory
+
+- name: 复制证书到其他控制节点-PKI
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 644
+  with_items:
+    - { src: '/etc/kubernetes/pki/ca.key',dest: '/etc/kubernetes/pki/ca.key'}
+    - { src: '/etc/kubernetes/pki/ca.crt',dest: '/etc/kubernetes/pki/ca.crt'}
+    - { src: '/etc/kubernetes/pki/sa.key',dest: '/etc/kubernetes/pki/sa.key'}
+    - { src: '/etc/kubernetes/pki/sa.pub',dest: '/etc/kubernetes/pki/sa.pub'}
+    - { src: '/etc/kubernetes/pki/front-proxy-ca.crt',dest: '/etc/kubernetes/pki/front-proxy-ca.crt'}
+    - { src: '/etc/kubernetes/pki/front-proxy-ca.key',dest: '/etc/kubernetes/pki/front-proxy-ca.key'}
+    - { src: '/etc/kubernetes/pki/etcd/ca.crt',dest: '/etc/kubernetes/pki/etcd/ca.crt'}
+    - { src: '/etc/kubernetes/pki/etcd/ca.key',dest: '/etc/kubernetes/pki/etcd/ca.key'}
+    - { src: '/etc/kubernetes/admin.conf',dest: '/etc/kubernetes/admin.conf'}
+  tags: 
+    - k8s-cert
+    - distribution
+
+- name: 设置kubectl自动补全
+  lineinfile:
+    dest: ~/.bashrc
+    line: "{{ item }}"
+  with_items:
+    - "source <(kubectl completion bash)"
+
+- name: 生效配置
+  shell: "source ~/.bashrc"
+  ignore_errors: yes

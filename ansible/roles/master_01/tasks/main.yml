@@ -1,4 +1,12 @@
 ---
+- name: 复制Nginx配置文件
+  template:
+    src: k8s.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Nginx配置
+  service: name=nginx state=restarted
+
 - name: 生成集群
   shell: kubeadm init --config /root/kubeadm-config.yaml
   register: check
@@ -14,27 +22,5 @@
 - name: Flannel网络插件
   shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml warn=False
   ignore_errors: yes
+  when: flannel_install == 1
 
-- name: 保存 Join Cluster信息命令
-  shell: 'kubeadm token create --print-join-command'
-  register: kubernetes_join_token
-  
-- name: Set facts Master
-  set_fact: kubernetes_join_token={{ kubernetes_join_token.stdout.replace('To add a node to this kubernetes, run the following command:\n\n    ', '').replace('\\\n','') }}
-  
-- name: 检出Token命令
-  debug: msg={{ kubernetes_join_token }}
-
-- name: 复制证书到其他控制节点
-  shell: "for i in {{ groups['k8s_master_second'] }};do scp '{{ item.src }}' $i:/{{ item.dest }}; done"
-  with_items:
-      - { src: '/etc/kubernetes/pki/ca.key',dest: '/etc/kubernetes/pki/ca.key'}
-      - { src: '/etc/kubernetes/pki/ca.crt',dest: '/etc/kubernetes/pki/ca.crt'}
-      - { src: '/etc/kubernetes/pki/sa.key',dest: '/etc/kubernetes/pki/sa.key'}
-      - { src: '/etc/kubernetes/pki/sa.pub',dest: '/etc/kubernetes/pki/sa.pub'}
-      - { src: '/etc/kubernetes/pki/front-proxy-ca.crt',dest: '/etc/kubernetes/pki/front-proxy-ca.crt'}
-      - { src: '/etc/kubernetes/pki/front-proxy-ca.key',dest: '/etc/kubernetes/pki/front-proxy-ca.key'}
-      - { src: '/etc/kubernetes/pki/etcd/ca.crt',dest: '/etc/kubernetes/pki/etcd/ca.crt'}
-      - { src: '/etc/kubernetes/pki/etcd/ca.key',dest: '/etc/kubernetes/pki/etcd/ca.key'}
-      - { src: '/etc/kubernetes/admin.conf',dest: '/etc/kubernetes/admin.conf'}
-#  - shell: "scp '{{ item.src }}' {{ groups['k8s_master_second'][1] }}:/{{ item.dest }}"

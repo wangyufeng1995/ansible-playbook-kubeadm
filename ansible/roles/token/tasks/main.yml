@@ -1,0 +1,7 @@
+---
+- name: 保存work token
+  shell: 'kubeadm token create --print-join-command > /tmp/join-cluster-token-work.sh' 
+
+- name: 保存master token
+  shell: 'echo `kubeadm token create --print-join-command` --control-plane >/tmp/join-cluster-token-master.sh'
+

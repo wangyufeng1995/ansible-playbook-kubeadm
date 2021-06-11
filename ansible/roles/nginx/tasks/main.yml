@@ -9,13 +9,17 @@
   selinux: state=disabled
 - name: Firewalld disable
   service: name=firewalld state=stopped enabled=no
+- name: 添加YUM源
+  yum:
+    name:
+      - epel-release
+    state: latest
 
 ######## nginx install ##################
 - name: 安装Nginx
   yum:
     name: 
       - nginx
-      - epel-release
     state: latest
 - name: 复制Nginx配置文件
   template: 

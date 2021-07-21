@@ -1,0 +1,8 @@
+#docker配置文件目录
+docker_config_path: '/etc/docker/'
+#harbor仓库可信
+harbor: "'reg1.syswin.com'"
+#k8s版本
+kubernetes_version: '1.20.0'
+#kubelet配置路径`
+kubelet_config_path: "/etc/sysconfig/"

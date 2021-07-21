@@ -1,4 +1,4 @@
-#ansible-playbook -i host -e @inventory/var -f 3 main.yaml 
+#ansible-playbook -i host -e @group_vars/var -f 3 main.yaml 
 ---
 #所有要装nginx docker kubeadm kubectl kubelet的节点
 - name: "1.安装初始组件Nginx、docker、k8s"
